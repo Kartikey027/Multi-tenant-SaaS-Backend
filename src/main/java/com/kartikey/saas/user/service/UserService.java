@@ -67,12 +67,12 @@ public class UserService {
                         );
     }
 
-    public void DisableUser(
+    public void disableUser(
             UUID tenantId,
-            String email
+            Long userId
     ){
         User user=userRepo
-                .findByTenant_TenantIdAndEmail(tenantId,email)
+                .findByTenant_TenantIdAndId(tenantId,userId)
                 .orElseThrow(()->
                         new ResourceNotFoundException(
                                 "User Not Found For The Tenant"
