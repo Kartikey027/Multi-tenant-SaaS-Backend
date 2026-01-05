@@ -66,4 +66,16 @@ public class TenantService {
 
         tenant.setStatus(TenantStatus.ACTIVE);
     }
+
+    @Transactional(readOnly = true)
+    public Tenant getTenantByTenantId(UUID tenantId) {
+        return tenantRepo
+                .findByTenantId(tenantId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Tenant not found for tenantId: " + tenantId
+                        )
+                );
+    }
+
 }
