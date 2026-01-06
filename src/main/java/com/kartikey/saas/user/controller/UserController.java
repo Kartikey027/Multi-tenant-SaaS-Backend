@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/internal/admin/tenants/{tenantId}/users")
+@RequestMapping("/internal/admin/tenants/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -20,11 +20,10 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse createUser(
-            @PathVariable UUID tenantId,
+
             @RequestBody CreateUserRequest request
             ){
             User user= userService.createUser(
-                    tenantId,
                     request.getEmail(),
                     request.getPassword()
             );
@@ -39,18 +38,16 @@ public class UserController {
     @PostMapping("/{userId}/disable")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void disableUser(
-            @PathVariable UUID tenantId,
             @PathVariable Long userId
     ){
-        userService.disableUser(tenantId,userId);
+        userService.disableUser(userId);
     }
 
     @PostMapping("/{userId}/enable")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enableUser(
-            @PathVariable UUID tenantId,
             @PathVariable Long userId
     ){
-        userService.enableUser(tenantId,userId);
+        userService.enableUser(userId);
     }
 }

@@ -31,26 +31,20 @@ public class TenantController {
                 .build();
     }
 
-    @PostMapping("/{tenantId}/suspend")
+    @PostMapping("/suspend")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void suspendTenant(
-            @PathVariable UUID tenantId
-            ){
-        tenantService.suspendTenant(tenantId);
+    public void suspendTenant(){
+        tenantService.suspendTenant();
     }
 
-    @PostMapping("/{tenantId}/activate")
+    @PostMapping("/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void activateTenant(
-            @PathVariable UUID tenantId
-    ){
-        tenantService.activateTenant(tenantId);
+    public void activateTenant(){
+        tenantService.activateTenant();
     }
 
-    @GetMapping("/{tenantId}")
-    public Tenant getTenant(
-            @PathVariable UUID tenantId
-    ){
-        return tenantService.getTenantByTenantId(tenantId);
+    @GetMapping()
+    public Tenant getTenant(){
+        return tenantService.getTenantByTenantId();
     }
 }

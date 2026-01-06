@@ -2,6 +2,7 @@ package com.kartikey.saas.tenant.service;
 
 
 import com.kartikey.saas.common.exception.ResourceNotFoundException;
+import com.kartikey.saas.common.tenant.TenantContext;
 import com.kartikey.saas.tenant.entity.Tenant;
 import com.kartikey.saas.tenant.entity.TenantStatus;
 import com.kartikey.saas.tenant.repository.TenantRepo;
@@ -30,7 +31,8 @@ public class TenantService {
     }
 
     @Transactional(readOnly = true)
-    public Tenant getActiveTenantByTenantId(UUID tenantId){
+    public Tenant getActiveTenantByTenantId(){
+        UUID tenantId= TenantContext.getTenantId();
         return tenantRepo
                 .findByTenantIdAndStatus(tenantId,TenantStatus.ACTIVE)
                 .orElseThrow(()->
@@ -40,7 +42,8 @@ public class TenantService {
                 );
     }
 
-    public void suspendTenant(UUID tenantId){
+    public void suspendTenant(){
+        UUID tenantId= TenantContext.getTenantId();
         Tenant tenant=tenantRepo
                 .findByTenantId(tenantId)
                 .orElseThrow(()->
@@ -51,7 +54,8 @@ public class TenantService {
         tenant.setStatus(TenantStatus.SUSPENDED);
     }
 
-    public void activateTenant(UUID tenantId) {
+    public void activateTenant() {
+        UUID tenantId= TenantContext.getTenantId();
         Tenant tenant = tenantRepo
                 .findByTenantId(tenantId)
                 .orElseThrow(() ->
@@ -68,7 +72,8 @@ public class TenantService {
     }
 
     @Transactional(readOnly = true)
-    public Tenant getTenantByTenantId(UUID tenantId) {
+    public Tenant getTenantByTenantId() {
+        UUID tenantId= TenantContext.getTenantId();
         return tenantRepo
                 .findByTenantId(tenantId)
                 .orElseThrow(() ->

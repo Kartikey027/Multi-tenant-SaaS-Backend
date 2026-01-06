@@ -1,6 +1,7 @@
 package com.kartikey.saas.auth.service;
 
 import com.kartikey.saas.common.exception.ResourceNotFoundException;
+import com.kartikey.saas.common.tenant.TenantContext;
 import com.kartikey.saas.tenant.entity.TenantStatus;
 import com.kartikey.saas.tenant.repository.TenantRepo;
 import com.kartikey.saas.user.entity.User;
@@ -23,7 +24,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public String login(UUID tenantId,String email,String rawPassword){
+    public String login(String email,String rawPassword){
+        UUID tenantId= TenantContext.getTenantId();
         tenantRepo.findByTenantIdAndStatus(tenantId, TenantStatus.ACTIVE)
                 .orElseThrow(()->
                         new ResourceNotFoundException("Invalid or Inactive Tenant")

@@ -19,7 +19,6 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public LoginResponse login(@RequestBody @Valid LoginRequest request){
         String token= authService.login(
-                request.getTenantId(),
                 request.getEmail(),
                 request.getPassword()
         );

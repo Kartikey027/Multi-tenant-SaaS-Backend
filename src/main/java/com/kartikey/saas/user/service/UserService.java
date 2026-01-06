@@ -1,6 +1,7 @@
 package com.kartikey.saas.user.service;
 
 import com.kartikey.saas.common.exception.ResourceNotFoundException;
+import com.kartikey.saas.common.tenant.TenantContext;
 import com.kartikey.saas.tenant.entity.Tenant;
 import com.kartikey.saas.tenant.entity.TenantStatus;
 import com.kartikey.saas.tenant.repository.TenantRepo;
@@ -24,10 +25,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User createUser(
-            UUID tenantId,
             String email,
             String rawPassword
     ){
+        UUID tenantId= TenantContext.getTenantId();
         Tenant tenant=tenantRepo
                 .findByTenantIdAndStatus(tenantId, TenantStatus.ACTIVE)
                 .orElseThrow(()->
@@ -51,9 +52,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getActiveUserByEmail(
-            UUID tenantId,
             String email
     ){
+        UUID tenantId= TenantContext.getTenantId();
         return userRepo
                 .findByTenant_TenantIdAndEmailAndStatus(
                         tenantId,
@@ -68,9 +69,9 @@ public class UserService {
     }
 
     public void disableUser(
-            UUID tenantId,
             Long userId
     ){
+        UUID tenantId= TenantContext.getTenantId();
         User user=userRepo
                 .findByTenant_TenantIdAndId(tenantId,userId)
                 .orElseThrow(()->
@@ -81,7 +82,8 @@ public class UserService {
         user.setStatus(UserStatus.DISABLED);
     }
 
-    public void enableUser(UUID tenantId, Long userId) {
+    public void enableUser(Long userId) {
+        UUID tenantId= TenantContext.getTenantId();
         User user = userRepo
                 .findByTenant_TenantIdAndId(tenantId, userId)
                 .orElseThrow(() ->
