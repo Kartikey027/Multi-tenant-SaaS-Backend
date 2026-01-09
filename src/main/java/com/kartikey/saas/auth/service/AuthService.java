@@ -26,6 +26,9 @@ public class AuthService {
 
     public String login(String email,String rawPassword){
         UUID tenantId= TenantContext.getTenantId();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context is missing");
+        }
         tenantRepo.findByTenantIdAndStatus(tenantId, TenantStatus.ACTIVE)
                 .orElseThrow(()->
                         new ResourceNotFoundException("Invalid or Inactive Tenant")

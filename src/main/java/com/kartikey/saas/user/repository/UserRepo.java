@@ -26,4 +26,6 @@ public interface UserRepo extends JpaRepository<User,Long> {
             String email,
             UserStatus status
     );
+
+    Optional<User> findFirstByTenant_TenantIdOrderByCreatedAtAsc(UUID tenantId);
 }

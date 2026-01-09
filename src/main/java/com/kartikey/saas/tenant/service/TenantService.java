@@ -33,6 +33,9 @@ public class TenantService {
     @Transactional(readOnly = true)
     public Tenant getActiveTenantByTenantId(){
         UUID tenantId= TenantContext.getTenantId();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context is missing");
+        }
         return tenantRepo
                 .findByTenantIdAndStatus(tenantId,TenantStatus.ACTIVE)
                 .orElseThrow(()->
@@ -44,6 +47,9 @@ public class TenantService {
 
     public void suspendTenant(){
         UUID tenantId= TenantContext.getTenantId();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context is missing");
+        }
         Tenant tenant=tenantRepo
                 .findByTenantId(tenantId)
                 .orElseThrow(()->
@@ -56,6 +62,9 @@ public class TenantService {
 
     public void activateTenant() {
         UUID tenantId= TenantContext.getTenantId();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context is missing");
+        }
         Tenant tenant = tenantRepo
                 .findByTenantId(tenantId)
                 .orElseThrow(() ->
@@ -74,6 +83,9 @@ public class TenantService {
     @Transactional(readOnly = true)
     public Tenant getTenantByTenantId() {
         UUID tenantId= TenantContext.getTenantId();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context is missing");
+        }
         return tenantRepo
                 .findByTenantId(tenantId)
                 .orElseThrow(() ->
