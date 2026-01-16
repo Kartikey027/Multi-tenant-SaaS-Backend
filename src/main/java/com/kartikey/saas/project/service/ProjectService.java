@@ -1,5 +1,7 @@
 package com.kartikey.saas.project.service;
 
+import com.kartikey.saas.audit.entity.AuditAction;
+import com.kartikey.saas.audit.service.AuditService;
 import com.kartikey.saas.common.exception.ForbiddenOperationException;
 import com.kartikey.saas.common.exception.ResourceNotFoundException;
 import com.kartikey.saas.common.security.SecurityUtils;
@@ -25,6 +27,7 @@ public class ProjectService {
     private final ProjectRepo projectRepo;
     private final UserRepo userRepo;
     private final ProjectPolicy projectPolicy;
+    private final AuditService auditService;
 
     public Project createProject(String name){
         UUID tenantId= TenantContext.getTenantId();
@@ -46,6 +49,14 @@ public class ProjectService {
         project.setTenant(currentUser.getTenant());
         project.setStatus(ProjectStatus.ACTIVE);
 
+        auditService.log(
+                project.getTenant(),
+                AuditAction.CREATE,
+                "PROJECT",
+                project.getId(),
+                "Project created"
+        );
+
         return projectRepo.save(project);
     }
 
@@ -58,5 +69,13 @@ public class ProjectService {
                         new ResourceNotFoundException("Project Not Found")
                 );
         project.setStatus(ProjectStatus.ARCHIVED);
+
+        auditService.log(
+                project.getTenant(),
+                AuditAction.ARCHIVE,
+                "PROJECT",
+                project.getId(),
+                "Project archived"
+        );
     }
 }

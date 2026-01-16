@@ -1,5 +1,7 @@
 package com.kartikey.saas.user.service;
 
+import com.kartikey.saas.audit.entity.AuditAction;
+import com.kartikey.saas.audit.service.AuditService;
 import com.kartikey.saas.common.exception.ForbiddenOperationException;
 import com.kartikey.saas.common.exception.ResourceNotFoundException;
 import com.kartikey.saas.common.exception.UnauthorizedException;
@@ -32,6 +34,7 @@ public class UserService {
     private final TenantRepo tenantRepo;
     private final PasswordEncoder passwordEncoder;
     private final UserPolicy userPolicy;
+    private final AuditService auditService;
 
     public User createUser(
             String email,
@@ -94,6 +97,15 @@ public class UserService {
         }
 
         ctx.getTargetUser().setStatus(UserStatus.DISABLED);
+
+
+        auditService.log(
+                ctx.getTargetUser().getTenant(),
+                AuditAction.DISABLE,
+                "USER",
+                ctx.getTargetUser().getId(),
+                "User disabled"
+        );
     }
 
     @Transactional
@@ -105,6 +117,15 @@ public class UserService {
         }
 
         ctx.getTargetUser().setStatus(UserStatus.ACTIVE);
+
+
+        auditService.log(
+                ctx.getTargetUser().getTenant(),
+                AuditAction.ENABLE,
+                "USER",
+                ctx.getTargetUser().getId(),
+                "User enabled"
+        );
     }
 
    private UserActionContext resolveUserActionContext(Long targetUserId){
