@@ -1,5 +1,6 @@
 package com.kartikey.saas.user.service;
 
+import com.kartikey.saas.common.exception.ForbiddenOperationException;
 import com.kartikey.saas.common.exception.ResourceNotFoundException;
 import com.kartikey.saas.common.exception.UnauthorizedException;
 import com.kartikey.saas.common.tenant.TenantContext;
@@ -38,7 +39,7 @@ public class UserService {
     ){
         UUID tenantId= TenantContext.getTenantId();
         if (tenantId == null) {
-            throw new IllegalStateException("Tenant context is missing");
+            throw new ForbiddenOperationException("Tenant context is missing");
         }
         Tenant tenant=tenantRepo
                 .findByTenantIdAndStatus(tenantId, TenantStatus.ACTIVE)
@@ -67,7 +68,7 @@ public class UserService {
     ){
         UUID tenantId= TenantContext.getTenantId();
         if (tenantId == null) {
-            throw new IllegalStateException("Tenant context is missing");
+            throw new ForbiddenOperationException("Tenant context is missing");
         }
         return userRepo
                 .findByTenant_TenantIdAndEmailAndStatus(
@@ -89,7 +90,7 @@ public class UserService {
         UserActionContext ctx= resolveUserActionContext(userId);
 
         if (!userPolicy.canPerform(UserAction.DISABLE,ctx)){
-            throw new IllegalStateException("Not Allowed to disable user");
+            throw new ForbiddenOperationException("Not Allowed to disable user");
         }
 
         ctx.getTargetUser().setStatus(UserStatus.DISABLED);
@@ -100,7 +101,7 @@ public class UserService {
         UserActionContext ctx = resolveUserActionContext(userId);
 
         if (!userPolicy.canPerform(UserAction.ENABLE, ctx)) {
-            throw new IllegalStateException("Not allowed to enable user");
+            throw new ForbiddenOperationException("Not allowed to enable user");
         }
 
         ctx.getTargetUser().setStatus(UserStatus.ACTIVE);
@@ -109,7 +110,7 @@ public class UserService {
    private UserActionContext resolveUserActionContext(Long targetUserId){
         UUID tenantId=TenantContext.getTenantId();
         if (tenantId==null){
-            throw new IllegalStateException("Tenant Context Missing");
+            throw new ForbiddenOperationException("Tenant Context Missing");
         }
 
         String currentUserEmail=SecurityContextHolder.getContext()
@@ -119,7 +120,7 @@ public class UserService {
         User currentUser=userRepo
                 .findByTenant_TenantIdAndEmail(tenantId,currentUserEmail)
                 .orElseThrow(()->
-                        new IllegalStateException(
+                        new ForbiddenOperationException(
                                 "Authenticated User not Found"
                         )
                 );
